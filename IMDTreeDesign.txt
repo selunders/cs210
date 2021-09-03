@@ -1,0 +1,93 @@
+IMDTreeDesign.txt
+
+File input:
+    ReadTVData - From readFile.pdf on the course website
+    Takes in the database file and stores it in a tree from showTree.h
+        In: TV show database file name
+        Out: Creates a binary search tree and reads the TV shows + information into nodes of the tree
+
+String Routines
+    removeBlanksFromString
+        loop through characters of string, replacing spaces with the nul \0 character
+    IndexOf
+        loop through each character of the array, comparing it to an input character
+    GetSubString
+        loop through the characters of an array from a given starting index to ending index, copying each character to a second array. Return the second array
+
+Binary Search Tree:
+    Class: BinarySearchTree
+        Private methods:
+            struct BSTreeNode
+                strings:
+                    seriesName
+                    url
+                    genre
+                ints:
+                    startYear
+                    endYear
+                BSTreeNode pointers:
+                    left
+                    right
+                linked list
+                    actors
+            Functions (void if not specified)
+                InitBSTree
+                    Set rootPtr to NULL
+                AddNodeR
+                    if t != NULL, run AddNodeR on t->left and t->right
+                    else, add new node to Tree with input data
+                PrintAll
+                    if t != NULL, print out all the TV Shows & Data
+                PrintShowNames
+                    if t != NULL, print out all the show names
+                bool PrintShowActors
+                    if input show name matches a name in the list, return 1
+                searchActor
+                    traverse though each show, if an actor matches the given name, print the series title
+                searchByYears
+                    traverse through each show, if the years it ran are within a given range, print the show name
+        Public Functions
+            BinarySearchTree
+                Runs InitBSTree
+            AddNodeR
+                Runs private AddNodeR
+            PrintAll
+                Runs private PrintAll
+            PrintShowNames
+                Runs private PrintShowNames
+            SearchActor
+                Runs private SearchActor
+            SearchByYears 
+                Runs private searchByYears
+            
+Actor Linked Lists
+    class actorLL
+        private methods:
+            struct node
+                string name
+                node* next
+            
+            typedef struct node* nodePtr
+
+            Functions:
+                initList
+                    set head to NULL
+                AddNode    
+                    traverses to the end of the list and adds given actor name as a new node
+                printList
+                    if p != NULL, cout the actor name
+                searchActor
+                    traverses through the list, checking if a given string matches any actor name in the actors Linked List
+        Public methods:
+            Functions:
+                actorLL()
+                    runs initList
+                
+                AddNode
+                    runs the private addNode function with a given string
+                printList 
+                    runs private printList
+                searchActor
+                    runs private searchActor with given string
+                
+                

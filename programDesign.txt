@@ -1,0 +1,65 @@
+Seth Lunders
+CS121 - Assignment 3 (Maze Solver)
+Program Design
+
+
+Inputs
+----------------- 
+	Name of a maze file
+
+Outputs
+-----------------
+	"The maze can/cannot be solved"
+	Print the solution array
+
+
+Data Structures
+----------------------------------
+
+	Variables:
+		int mazeName;		// store the file name (user input)
+		int mazeRows;		// set from the data file
+		int mazeColumns;	// set from the data file
+		int solvetest;		// 0 for not solveable, 1 for solveable (assumed at the start), 2 for solved
+		int solveTest;		// a variable that counts up if 
+
+	Arrays:
+		char maze[mazeRows][mazeColumns];			// input the chars from the data file
+		char mazeSolution[mazeRows][mazeColumns];	// will be used to store the solution
+
+	Lists:
+		struct qNode // node to store coordinates of a cell to visit
+			int row;
+			int column;
+			struct qNode* next;
+			qNode(int r, int c) // constructor
+				row = r; 		// set row
+				column = c; 	// set column
+
+		typeDef struct qNode* qNodePtr;
+
+		struct queue // a list to store the list of cells to visit
+			qNodePtr start;	// To access coordinates: do "qNodePtr n = queueName->start", then
+							// coords can be accessed with n->row and n->column
+			qNodePtr end;	// for adding on to the queue
+			void Enqueue(int row, int col) // create a new qNode with the given row & column
+			void Dequeue	// delete the first node of the queue
+			queue(){}		// queue constructor: set start and end to point to NULL
+
+Functions
+----------------------------------
+
+	bool function to check if the current cell is adjacent to the exit
+
+	void function to read the maze
+		take the maze array as an input
+
+	void function to solve the maze // starting at the current coordinates,
+		check if the current cell is adjacent to the exit
+			if so, mark current cell as visited in the mazeSolution array
+			return
+		mark the current cell as visited in the mazeSolution array
+		if the north, south, east, or west cells are unvisited, add them to the queue
+		if the queue is empty and the current cell is not adjacent to the exit, the maze is not solveable
+			cout "This maze cannot be solved" and return
+		make queue->start the current cell, then dequeue the first qNode
