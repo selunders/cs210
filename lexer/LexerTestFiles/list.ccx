@@ -1,0 +1,158 @@
+pkg list {
+
+    type listel_type {
+        {:
+            data: ptr := null;
+            next: listel_type := null;
+            prev: listel_type := null;
+        }:
+    }
+
+    type list_type {
+        {:
+            head: listel_type := null;
+            tail: listel_type := null;
+        }:;
+
+    mutator append(l: in out list_type; x: in ptr)
+        tmp: listel_type;
+    {
+        tmp := alloc(listel_type);
+        tmp.data := x;
+        tmp.next := null;
+        if (l.tail != null) then
+            tmp.prev := l.tail;
+            l.tail.next := tmp;
+            l.tail := tmp;
+        else
+            tmp.prev := null;
+            l.head := tmp;
+            l.tail := tmp;
+        end if;
+    };
+
+    accessor data(e: listel_type) $ ptr
+    {
+        $ e.data;
+    };
+
+    /*
+     * Old and nesty version (that works)
+     *
+    func find(l: list_type; x: ptr) $ listel_type
+        tmp: listel_type;
+    {
+        tmp := l.head;
+        while (tmp != null) loop
+            if (tmp.data = x) then
+                exit;
+            end if;
+            tmp := tmp.next;
+        end loop;
+        $ tmp;
+    };
+     */
+
+    func find(l: list_type; x: ptr) $ listel_type
+        tmp: listel_type;
+    {
+        tmp := l.head;
+        {:
+            exit when ((tmp = null) or (tmp.data = x));
+            tmp := tmp.next;
+        }:
+        $ tmp;
+    };
+
+    accessor head(l: list_type) $ listel_type
+    {
+        $ l.head;
+    };
+
+    /*
+     * This routine performs a prefix insertion of an el with data x.
+     */
+    mutator insert(
+        l: in out list_type;   /* list to insert within */
+        e: in out listel_type; /* place to insert el before */
+        x: in ptr         /* data of new el */
+        )
+        tmp: listel_type;
+    {
+        tmp := alloc(listel_type);
+        tmp.data := x;
+        tmp.next := e;
+        tmp.prev := e.prev;
+        if (e.prev != null) then
+            e.prev.next := tmp;
+        end if;
+        e.prev := tmp;
+        if (e = l.head) then
+            l.head := tmp;
+        end if;
+    };
+
+    accessor next(e: listel_type) $ listel_type
+    {
+        $ e.next;
+    };
+
+    mutator prepend(l: in out list_type; x: in data_type)
+        tmp: listel_type;
+    {
+        tmp := alloc(listel_type);
+        tmp.prev := null;
+        tmp.data := x;
+        if (l.head != null) then
+            tmp.next := l.head; 
+            l.head.prev := tmp;
+            l.head := tmp;
+        else
+            tmp.next := null;
+            l.head := tmp;
+            l.tail := tmp;
+        end if;
+    };
+
+    accessor prev(e: listel_type) $ listel_type
+    {
+        $ e.prev;
+    };
+
+    mutator remove(l: in out list_type; e: in out listel_type)
+    {
+        if (e.prev != null) then
+            e.prev.next := e.next;
+        end if;
+        if (e.next != null) then
+            e.next.prev := e.prev;
+        end if;
+        if (e = l.head) then
+            l.head := e.next;
+        end if;
+        if (e = l.tail) then
+            l.tail := e.prev;
+        end if;
+        dealloc(e);
+        e := null;
+    };
+    
+    func size(l: list_type) $ list_size_type
+        tmp: listel_type;
+        n: list_size_type;
+    {
+        n := 0;
+        tmp := l.head;
+        while (tmp != null) {:
+            tmp := tmp.next;
+            n := n + 1;
+        }:
+        $ n;
+    };
+
+    accessor tail(l: list_type) $ listel_type
+    {
+        $ l.tail;
+    };
+};
+

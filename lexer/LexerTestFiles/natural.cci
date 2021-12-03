@@ -1,0 +1,17 @@
+
+pkg natural ifc {
+    /*
+     * types
+     */
+    type natural;
+
+    /*
+     * routines
+     */
+    func "-"(x: natural) $ natural;
+    func "-"(lhs, rhs: natural) $ natural;
+    func "+"(lhs, rhs: natural) $ natural;
+    func "*"(lhs, rhs: natural) $ natural;
+    func "/"(lhs, rhs: natural) $ natural;
+    func "mod"(lhs, rhs: natural) $ natural;
+};

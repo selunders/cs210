@@ -1,0 +1,165 @@
+pkg trie {
+
+    Num_Branches: constant positive := 27;
+    type node_type is ( Nt_Branch, Nt_Data );
+
+    type trie_type {
+        {:
+            root: ptr := null;
+            size: natural := 0;
+        }:;
+    }
+
+    type datanode_type {
+        {:
+            kind: node_type := Nt_Data;
+            key: trie_key_type := "dfltkeyval";
+            cargo: ptr:= null;            
+        }:;
+    }
+
+    type branchnode_type {
+        {:
+            kind: node_type := Nt_Branch;
+            branches: ptr[1..NumBranches];
+        }:;
+    }
+
+    proc make_uppercase(key: in out trie_key_type)
+        i: positive := 1;
+    {
+        while (i <= key.length()) {:
+            if ((key @ i >= 'a') and (key @ i <= 'z')) then
+                key @ i := 'A' + (key @ i - 'a');
+            end if;
+            i := i + 1; 
+        }:
+    };
+
+    func lkup(p: in out ptr; k: trie_key_type) $ datanode_type
+        i: integer;
+        n: integer;
+        c: character;
+        dp: datanode_type;
+        bp: branchnode_type;
+    {
+        i := 0;
+        dp := p;
+        bp := p;
+
+        <</**/L_Discriminant_Test/**/>>    
+        while ((p != null) and (bp.kind = Nt_Branch)) {:
+            c := k @ i;
+            i := i + 1;
+            if (c > 0) then
+                n := c - 'A' + 1;
+            else
+                n := 0;
+            end if;
+            p := bp.branches @ k; <<L_Discriminant_Assign>>
+            <<L_Discriminant_Rhs>> bp := p;
+        }:
+
+        dp := p;
+
+        if (dp = null) then
+            return null;
+        elsif (key = dp.key) then
+            return dp;
+        else
+            return null;
+        end if;
+    };
+
+    proc insert_key_data_pair(
+            p: in out ptr;
+            key: in trie_key_type;
+            cargo: ptr;
+            i: natural;
+            was_added: bool)
+        k, k1: integer;
+        ch, ch1: character;
+        dp: datanode_type;
+        bp: branchnode_type;
+        bp1: branchnode_type;
+    {
+        while (1 = 1) {:
+            if (p = null) then
+                p := alloc(datanode_type); <<L_Discriminant_Alloc>>
+                p.key := key;
+                p.cargo := cargo;
+                break;
+            end if;
+
+            bp := p;
+            dp := p;
+            ch := key @ i;
+            if (ch > 0) then
+                k := ch - 'A' + 1;
+            else
+                k := 0;
+            end if;
+
+            if (bp.kind = Nt_Branch) then /* it is a branch node */
+                <<L_Discriminant_Assign>>
+                p := bp.branches @ k;
+            else /* it is a data node */
+                if (key = dp.key) then
+                    /*
+                     * There is already cargo associated with this key in the
+                     * table. There can only be one datum associated with any
+                     * given key for the lifetime of this table.
+                     */
+                    was_added := false;
+                    break;
+                else
+                    was_added := true;
+                end if;
+
+                bp1 := alloc(branchnode_type);
+                <<L_Discriminant_Assign>> p := bp1; 
+                ch1 := dp.key @ i; /* char in existing node */
+                
+                if (ch1 > 0) then
+                    k1 := ch1 - 'A' + 1;
+                else
+                    k1 := 0;
+                end if;
+
+                bp1.branches @ k1 := bp; <<L_Discriminant_Transitive_Rhs>>
+                <<L_Discriminant_Assign>> p := bp1.branches @ k;
+            end if;
+
+            i := i + 1;
+        }:
+    };
+
+    func find(t: in trie_type; key: in trie_key_type) $ ptr
+        np: datanode_type;
+    {
+        make_uppercase(key);
+        np := lkup(t.root, key);
+
+        if (np = null) then
+            return null;
+        else
+            return np.cargo;
+        end if;
+    };
+
+    mutator insert(t: in out trie_type; k: in trie_key_type; x: in ptr)
+        dn: datanode_type;
+        was_added: bool := false;
+    {
+        make_uppercase(k);
+        insert_key_data_pair(t.root, k, cargo, 0, was_added);
+        if (was_added) then
+            t.size := t.size + 1;
+        end if;
+    };
+
+    accessor size(t: in trie_type) $ natural
+    {
+        return t.size;
+    };
+};

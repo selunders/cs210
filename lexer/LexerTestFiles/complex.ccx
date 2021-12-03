@@ -1,0 +1,36 @@
+pkg complex_number {
+
+    type complex_number_type {
+        {:
+            re: float; /* real */
+            im: float; /* imaginary */
+        }:
+    }
+
+    accessor imaginary(c: complex_number_type) $ float
+    {
+        $ c.im;
+    };
+
+    accessor real(c: complex_number_type) $ float
+    {
+        $ c.re;
+    };
+
+    function "+"(c1, c2: complex_number_type) $ complex_number_type
+        tmp: complex_number_type;
+    {
+        tmp.re := c1.re + c2.re;
+        tmp.im := c1.im + c2.im;
+        $ tmp;
+    };
+
+    function "-"(c1, c2: complex_number_type) $ complex_number_type
+        tmp: complex_number_type;
+    {
+        tmp.re := c1.re - c2.re;
+        tmp.im := c1.im - c2.im;
+        $ tmp;
+    };
+
+};

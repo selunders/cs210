@@ -1,0 +1,195 @@
+pkg date {
+
+    type date_type {
+        {:
+            y: date_year_type := 1970;
+            mo: date_month_type := Jan;
+            d: date_day_type := 1;
+            h: date_hour_type := 0;
+            mi: date_min_type := 0;
+            s: date_sec_type := 0;
+            ms: date_msec_type := 0;
+        }:
+    }
+
+    func "="(lhs: date_type; rhs: date_type) $ bool
+    {
+        $ (
+            (lhs.y = rhs.y) and
+            (lhs.mo = rhs.mo) and
+            (lhs.d = rhs.d) and
+            (lhs.h = rhs.h) and
+            (lhs.mi = rhs.mi) and
+            (lhs.s = rhs.s) and
+            (lhs.ms = rhs.ms));
+    };
+
+    func is_leap_year(yr: date_year_type) $ bool
+    {
+        if ((yr mod 4) != 0) then
+            $ false;
+        elsif ((yr mod 100) != 0) then
+            $ true;
+        elsif ((yr mod 400) != 0) then
+            $ false;
+        else
+            $ true;
+        end if;
+    };
+
+    func "<"(lhs: date_type; rhs: date_type) $ bool
+    {
+        if (lhs.y > rhs.y) then
+            $ false;
+        end if;
+
+        if (lhs.y < rhs.y) then
+            $ true;
+        end if;
+
+        /* years are equal... */
+
+        if (lhs.mo > rhs.mo) then
+            $ false;
+        end if;
+
+        if (lhs.mo < rhs.mo) then
+            $ true;
+        end if;
+
+        /* months are equal */
+
+        if (lhs.d > rhs.d) then
+            $ false;
+        end if;
+
+        if (lhs.d < rhs.d) then
+            $ true;
+        end if;
+
+        /* days are equal */
+
+        if (lhs.h > rhs.h) then
+            $ false;
+        end if;
+
+        if (lhs.h < rhs.h) then
+            $ true;
+        end if;
+
+        /* hours are equal */
+
+        if (lhs.m > rhs.m) then
+            $ false;
+        end if;
+
+        if (lhs.m < rhs.m) then
+            $ true;
+        end if;
+
+        /* minutes are equal */
+
+        if (lhs.s > rhs.s) then
+            $ false;
+        end if;
+
+        if (lhs.s < rhs.s) then
+            $ true;
+        end if;
+
+        /* seconds are equal */
+
+        $ (lhs.ms < rhs.ms);
+    };
+
+    accessor day(d: date_type) $ date_day_type
+    {
+        $ d.d;
+    };
+
+    mutator day(d: in out date_type; day: in out day_date_type; b: out bool)
+    {
+        if (d.day_is_vaild(day)) then
+            d.d := day;
+            b := true;
+        else
+            b := false;
+        end if;
+    };
+
+    func day_is_valid(d: date_type; day: date_day_type) $ bool
+    {
+        case (d.m) {:
+            when (Apr or Jun or Sep or Nov) =>
+                $ day <= 30;
+            when Feb =>
+                if (is_leap_year(d.y)) then
+                    $ day <= 29;
+                else
+                    $ day <= 28;
+                end if;
+            when others =>
+                $ day <= 31;
+        }:
+    };
+
+    accessor hour(d: date_type) $ date_hour_type
+    {
+        $ d.h;
+    };
+
+    mutator hour(d: in out date_type; h: in date_hour_type)
+    {
+        d.h := h;
+    };
+
+    accessor min(d: date_type) $ date_min_type
+    {
+        $ d.mi;
+    };
+
+    mutator min(d: in out date_type; m: in date_min_type)
+    {
+        d.mi := m;
+    };
+
+    accessor month(d: date_type) $ date_month_type
+    {
+        $ d.mo;
+    };
+
+    mutator month(d: in out date_type; m: in date_month_type)
+    {
+        d.mo := m;
+    };
+
+    accessor msec(d: date_type) $ date_msec_type
+    {
+        $ d.ms;
+    };
+
+    mutator msec(d: in out date_type; m: in date_msec_type)
+    {
+        d.ms := m;
+    };
+
+    accessor sec(d: date_type) $ date_sec_type
+    {
+        $ d.s;
+    };
+
+    mutator sec(d: in out date_type; s: in date_sec_type)
+    {
+        d.s := s;
+    };
+
+    accessor year(d: date_type) $ date_year_type
+    {
+        $ d.y;
+    };
+
+    mutator year(d: in out date_type; y: in date_year_type)
+    {
+        d.y := y;
+    };
+};
